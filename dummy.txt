@@ -1,0 +1,7 @@
+login
+register
+add_product
+delete_product
+update_product
+delete_product
+update_product

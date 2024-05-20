@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Catalog</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Product Catalog</h1>
+        
+        <!-- Alert messages -->
+        {% if success %}
+        <div class="alert alert-success">{{ success }}</div>
+        {% endif %}
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+        
+        <form action="/add" method="post" class="mb-4" enctype="multipart/form-data">
+            <div class="form-row">
+                <div class="col-md-3 mb-3">
+                    <input type="text" class="form-control" name="name" placeholder="Product Name" required>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <input type="text" class="form-control" name="price" placeholder="Product Price" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <input type="text" class="form-control" name="description" placeholder="Product Description">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <input type="file" class="form-control" name="image">
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary btn-block">Add</button>
+                </div>
+            </div>
+        </form>
+
+        <ul class="list-group">
+            {% for product in products %}
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ product.name }}</strong> - ${{ product.price }}
+                        <p>{{ product.description }}</p>
+                        {% if product.image %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ product.image) }}" alt="{{ product.name }}" class="img-thumbnail" width="100">
+                        {% endif %}
+                    </div>
+                    <div class="btn-group" role="group">
+                        <form action="/delete/{{ product._id }}" method="post" class="mr-1">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                        <button class="btn btn-secondary btn-sm" type="button" data-toggle="modal" data-target="#updateModal{{ product._id }}">Update</button>
+                    </div>
+                </div>
+            </li>
+            
+            <!-- Update Modal -->
+            <div class="modal fade" id="updateModal{{ product._id }}" tabindex="-1" aria-labelledby="updateModalLabel{{ product._id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateModalLabel{{ product._id }}">Update Product</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="/update/{{ product._id }}" method="post" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="name{{ product._id }}">Name</label>
+                                    <input type="text" class="form-control" name="name" id="name{{ product._id }}" placeholder="New Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="price{{ product._id }}">Price</label>
+                                    <input type="text" class="form-control" name="price" id="price{{ product._id }}" placeholder="New Price">
+                                </div>
+                                <div class="form-group">
+                                    <label for="description{{ product._id }}">Description</label>
+                                    <input type="text" class="form-control" name="description" id="description{{ product._id }}" placeholder="New Description">
+                                </div>
+                                <div class="form-group">
+                                    <label for="image{{ product._id }}">Image</label>
+                                    <input type="file" class="form-control" name="image" id="image{{ product._id }}">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootst
